@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import axios from 'axios'
+import BN from 'bn.js'
 
 //Web3 stuff
 import Web3Modal from 'web3modal'
@@ -12,6 +13,7 @@ var coinApi = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&or
 const PaymentTest: React.FC = () => {
 	
 	const [completePayment, setCompletePayment] = React.useState(false)
+	const [web3Instance, setWeb3Instance] = React.useState<Web3 | null>(null)
 	
 	const providerOptions = {
 		portis: {
@@ -30,6 +32,7 @@ const PaymentTest: React.FC = () => {
 	const connectToPortis = async () => {
 		const provider = await web3modal.connect()
 		const web3 = new Web3(provider)
+		setWeb3Instance(web3)
 		console.log(web3)
 		const accounts = await web3.eth.getAccounts()
 		console.log('Account', accounts[0])
@@ -38,11 +41,25 @@ const PaymentTest: React.FC = () => {
 		}
 	}
 
+	const pay = async (web3: Web3, amount: number) => {
+		const accounts = await web3.eth.getAccounts()
+		const fromAccount = accounts[0]
+		const toAccount = '0xf69055901752f8f4f7f5bcc33943911e3f347f7d'
+
+		const amountInBn = new BN(0.0001)
+
+		await web3.eth.sendTransaction({
+			from: fromAccount,
+			to: toAccount,
+			value: web3.utils.toWei(amountInBn, 'ether') 
+		})
+	}
+
 	return(
 		<>
 		<div style={{fontFamily:"'Quicksand', sans-serif"}} className="bg-gray-200 h-screen w-screen lg:space-y-8">
 			<nav className="px-8 py-4 lg:px-16">
-				<NavLink to="/" style={{fontFamily:"'Krub', sans-serif"}} className="text-3xl">axios</NavLink>
+				<NavLink to="/" style={{fontFamily:"'Krub', sans-serif"}} className="text-3xl">axion</NavLink>
 			</nav>
 			<section className="px-8 lg:px-16 space-y-4">
 				<h1 className="font-bold text-3xl text-gray-800">1-click crypto checkouts for e-commerce.</h1>
@@ -53,13 +70,22 @@ const PaymentTest: React.FC = () => {
 			</div>
 		</div>
 			{
-				completePayment && <TransactionModal />
+				completePayment 
+				&& <TransactionModal 
+						pay={pay}
+						web3={web3Instance}
+					/>
 			}
 		</>
 	)
 }
 
-const TransactionModal: React.FC = () => {
+interface Transaction {
+	pay: (web3: Web3, amount: number) => Promise<void> | void;
+	web3: Web3 | null	
+}
+
+const TransactionModal: React.FC<Transaction> = ({pay, web3}) => {
 	
 	const [priceInEth, setPriceInEth] = React.useState<number | null>(null)
 	const [loading, setLoading] = React.useState(true)
@@ -78,6 +104,12 @@ const TransactionModal: React.FC = () => {
 		console.log(price)
 		setPriceInEth(price)
 		setLoading(false)
+	}
+
+	const initPayment = async () => {
+		if(web3){
+			var payment = await pay(web3, 0.0001)
+		}
 	}
 
 	return(
@@ -115,7 +147,7 @@ const TransactionModal: React.FC = () => {
                   <button
                     className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => {}}
+                    onClick={() => initPayment()}
                   >
                     CONFIRM
                   </button>
