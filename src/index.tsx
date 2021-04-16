@@ -2,8 +2,12 @@ import React from 'react'
 import { render } from 'react-dom'
 import './index.css'
 import { BrowserRouter, Route, Switch} from 'react-router-dom'
+
+//screen views
 import Landing from './views/Landing'
 import PaymentTest from './views/PaymentTest'
+import WalletDashboard from './views/WalletDashboard'
+import Login from './views/Login'
 
 const App: React.FC = () => {
     return(
@@ -15,6 +19,8 @@ const App: React.FC = () => {
             <Switch>
                 <Route exact path='/' component={Landing}/>
                 <Route path='/payments' component={PaymentTest} />
+                <Route path='/dashboard' component={WalletDashboard} />
+                <Route path='/auth' component={Login} />
             </Switch>
         </BrowserRouter>
       </>

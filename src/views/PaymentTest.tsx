@@ -71,9 +71,11 @@ const PaymentTest: React.FC = () => {
 		</div>
 			{
 				completePayment 
+				&& completePayment === true 
 				&& <TransactionModal 
 						pay={pay}
 						web3={web3Instance}
+						setCompleteTransaction={setCompletePayment}
 					/>
 			}
 		</>
@@ -82,10 +84,11 @@ const PaymentTest: React.FC = () => {
 
 interface Transaction {
 	pay: (web3: Web3, amount: number) => Promise<void> | void;
-	web3: Web3 | null	
+	web3: Web3 | null;
+	setCompleteTransaction: React.Dispatch<React.SetStateAction<boolean>>;	
 }
 
-const TransactionModal: React.FC<Transaction> = ({pay, web3}) => {
+const TransactionModal: React.FC<Transaction> = ({pay, web3, setCompleteTransaction}) => {
 	
 	const [priceInEth, setPriceInEth] = React.useState<number | null>(null)
 	const [loading, setLoading] = React.useState(true)
@@ -140,7 +143,7 @@ const TransactionModal: React.FC<Transaction> = ({pay, web3}) => {
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => {}}
+                    onClick={() => setCompleteTransaction(false)}
                   >
                     Close
                   </button>
