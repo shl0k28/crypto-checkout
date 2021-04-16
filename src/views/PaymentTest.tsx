@@ -85,7 +85,7 @@ const TransactionModal: React.FC = () => {
 			<div
             	className="justify-center items-center flex overflow-x-hidden overflow-y-hidden fixed inset-0 z-50 outline-none focus:outline-none"
           	>
-            <div className="relative w-auto mx-auto max-w-md">
+            <div className="relative w-md mx-auto max-w-md">
               {/*content*/}
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/*header*/}
@@ -117,7 +117,7 @@ const TransactionModal: React.FC = () => {
                     type="button"
                     onClick={() => {}}
                   >
-                    Save Changes
+                    CONFIRM
                   </button>
                 </div>
               </div>
