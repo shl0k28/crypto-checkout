@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 
 const Navbar: React.FC = () => {
     return(
@@ -9,7 +10,7 @@ const Navbar: React.FC = () => {
                 </h1>
             </div>
             <div style={{fontFamily:"'Quicksand', sans-serif"}}>
-                <button className="bg-gray-800 p-2 text-gray-200">Get Started</button>
+                <NavLink className="bg-gray-800 p-2 text-gray-200 hover:bg-gray-900 hover:text-gray-100" to="/payments">Get Started</NavLink>
             </div>
         </nav>
     )

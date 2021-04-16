@@ -3,6 +3,7 @@ import { render } from 'react-dom'
 import './index.css'
 import { BrowserRouter, Route, Switch} from 'react-router-dom'
 import Landing from './views/Landing'
+import PaymentTest from './views/PaymentTest'
 
 const App: React.FC = () => {
     return(
@@ -13,6 +14,7 @@ const App: React.FC = () => {
         <BrowserRouter>
             <Switch>
                 <Route exact path='/' component={Landing}/>
+                <Route path='/payments' component={PaymentTest} />
             </Switch>
         </BrowserRouter>
       </>
