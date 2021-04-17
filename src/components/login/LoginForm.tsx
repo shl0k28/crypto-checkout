@@ -1,11 +1,11 @@
 import React from 'react'
-import { Redirect } from 'react-router'
+import { Redirect, useHistory } from 'react-router'
 import { useAuth } from '../../context/AuthContext'
 
 const LoginForm: React.FC = () => {
 
     const { loginWithEmail } = useAuth()
-
+    const history = useHistory()
     
     const emailRef = React.useRef<HTMLInputElement | null>(null)
     const passwordRef = React.useRef<HTMLInputElement | null>(null)
@@ -17,7 +17,7 @@ const LoginForm: React.FC = () => {
             var res = await loginWithEmail(email, password)
             console.log(res?.user?.uid)
             if(res){
-                <Redirect to="/dashboard"/>
+                history.push('/dashboard')
             }
         }
     }
