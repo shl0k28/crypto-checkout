@@ -9,6 +9,7 @@ import Web3 from 'web3'
 import Portis from '@portis/web3'
 
 import Axion from '../smart-contract/build/contracts/Axion.json'
+import WalletModal from '../components/payments/WalletModal'
 
 var coinApi = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=2&page=1&sparkline=false`
 
@@ -18,7 +19,7 @@ const PaymentTest: React.FC = () => {
 	const [web3Instance, setWeb3Instance] = React.useState<Web3 | null>(null)
 	const [contractInstance, setContractInstance] = React.useState<any>()
 
-	const providerOptions = {
+	/* const providerOptions = {
 		portis: {
 			package: Portis, // required
 			options: {
@@ -31,18 +32,16 @@ const PaymentTest: React.FC = () => {
 		providerOptions
 	})
 
-	
+	*/
 	const connectToPortis = async () => {
-		const provider = await web3modal.connect()
-		const web3 = new Web3(provider)
+		const portis = new Portis('4795aa60-5914-42f2-bc7d-7dacb6e192cf', 'maticMumbai')
+		// @ts-ignore
+		const web3 = new Web3(portis.provider)
 		setWeb3Instance(web3)
 
 		console.log(web3)
 		const accounts = await web3.eth.getAccounts()
 		console.log('Account', accounts[0])
-		if(accounts){
-			setCompletePayment(true)
-		}
 	}
 
 	const pay = async (web3: Web3, amount: number) => {
@@ -62,8 +61,14 @@ const PaymentTest: React.FC = () => {
 
 		const amountInBn = new BN(0.0001)
 
-		var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
+		// var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
+		// 	from: fromAccount,
+		// 	value: amountInBn
+		// })
+		await web3.eth.sendTransaction({
 			from: fromAccount,
+			to: toAccount,
+			chainId: 80001,
 			value: amountInBn
 		})
 	}
@@ -79,17 +84,13 @@ const PaymentTest: React.FC = () => {
 			    <p className="text-xl">Easily accept cryptocurrencies and tokens for your ecommerce store.</p>
 			</section>
 			<div className="px-8 py-4 lg:px-16">
-				<button onClick={connectToPortis} className="bg-gray-800 p-2 text-gray-200">Checkout with Crypto</button>
+				<button onClick={() => setCompletePayment(true)} className="bg-gray-800 p-2 text-gray-200">Checkout with Crypto</button>
 			</div>
 		</div>
 			{
 				completePayment 
 				&& completePayment === true 
-				&& <TransactionModal 
-						pay={pay}
-						web3={web3Instance}
-						setCompleteTransaction={setCompletePayment}
-					/>
+				&& <WalletModal />
 			}
 		</>
 	)
@@ -100,6 +101,7 @@ interface Transaction {
 	web3: Web3 | null;
 	setCompleteTransaction: React.Dispatch<React.SetStateAction<boolean>>;	
 }
+
 
 const TransactionModal: React.FC<Transaction> = ({pay, web3, setCompleteTransaction}) => {
 	
