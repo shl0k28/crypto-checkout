@@ -8,13 +8,16 @@ import Web3Modal from 'web3modal'
 import Web3 from 'web3'
 import Portis from '@portis/web3'
 
+import Axion from '../smart-contract/build/contracts/Axion.json'
+
 var coinApi = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=2&page=1&sparkline=false`
 
 const PaymentTest: React.FC = () => {
 	
 	const [completePayment, setCompletePayment] = React.useState(false)
 	const [web3Instance, setWeb3Instance] = React.useState<Web3 | null>(null)
-	
+	const [contractInstance, setContractInstance] = React.useState<any>()
+
 	const providerOptions = {
 		portis: {
 			package: Portis, // required
@@ -33,6 +36,7 @@ const PaymentTest: React.FC = () => {
 		const provider = await web3modal.connect()
 		const web3 = new Web3(provider)
 		setWeb3Instance(web3)
+
 		console.log(web3)
 		const accounts = await web3.eth.getAccounts()
 		console.log('Account', accounts[0])
@@ -42,16 +46,25 @@ const PaymentTest: React.FC = () => {
 	}
 
 	const pay = async (web3: Web3, amount: number) => {
+
+		//initiate a contract instance
+		var abi = Axion.abi
+		var address = Axion.networks[80001].address
+
+		//@ts-ignore
+		const contract = new web3.eth.Contract(abi, address)
+		console.log(contract)
+		setContractInstance(contract)
+
 		const accounts = await web3.eth.getAccounts()
 		const fromAccount = accounts[0]
 		const toAccount = '0xf69055901752f8f4f7f5bcc33943911e3f347f7d'
 
 		const amountInBn = new BN(0.0001)
 
-		await web3.eth.sendTransaction({
+		var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
 			from: fromAccount,
-			to: toAccount,
-			value: web3.utils.toWei(amountInBn, 'ether') 
+			value: amountInBn
 		})
 	}
 
@@ -111,7 +124,7 @@ const TransactionModal: React.FC<Transaction> = ({pay, web3, setCompleteTransact
 
 	const initPayment = async () => {
 		if(web3){
-			var payment = await pay(web3, 0.0001)
+			await pay(web3, 0.0001)
 		}
 	}
 
