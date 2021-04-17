@@ -13,6 +13,7 @@ const WalletModal: React.FC = () => {
 
     const [paymentCurrency,setPaymentCurrency] = React.useState<string | null>(null)
     const [web3Instance, setWeb3Instance] = React.useState<Web3 | null>(null)
+    const [currentAccount, setCurrentAccount] = React.useState<string | null>(null)
     const [transactionStatus, setTransactionStatus] = React.useState<boolean | null>(null)
 
     const connectToPortis = async () => {
@@ -24,6 +25,7 @@ const WalletModal: React.FC = () => {
 		console.log(web3)
 		const accounts = await web3.eth.getAccounts()
 		console.log('Account', accounts[0])
+        setCurrentAccount(accounts[0])
 	}
 
     const sendEth = async (web3: Web3) => {
@@ -34,8 +36,8 @@ const WalletModal: React.FC = () => {
         
         const accounts = await web3.eth.getAccounts()
         var fromAccount = accounts[0]
-        var toAccount = '0x03f142529a7B70305C07a50fAA44f6EBDADB4624'
-        const amountInBn = new BN(0.0001)
+        var toAccount = '0xf69055901752f8f4f7f5bcc33943911e3f347f7d'
+        const amountInBn = new BN(0.001)
         var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
             from: fromAccount
         })
@@ -70,7 +72,7 @@ const WalletModal: React.FC = () => {
                         (
                             <>
                             {
-                                web3Instance === null ?
+                                currentAccount === null ?
                                 (
                                     <>
                                 <div style={{fontFamily:"'Krub', sans-serif"}}>
@@ -84,7 +86,20 @@ const WalletModal: React.FC = () => {
                                 ) : 
                                 (
                                     <>
-                                        <button onClick={() => sendEth(web3Instance)} className="bg-black text-gray-100 p-2">Confirm Checkout</button>
+                                        <div style={{fontFamily:"'Krub', sans-serif"}}>
+                                            <h1 className="text-center text-2xl">Confirm Payment: </h1>
+                                        </div>
+                                        <div style={{fontFamily:"'QuickSand', sans-serif"}}>
+                                            <p>Your total order: $29.99 </p>
+                                        </div>
+                                        <div className="space-x-4">
+                                            <button onClick={() => {
+                                                if(web3Instance){
+                                                    sendEth(web3Instance)
+                                                }
+                                            }} className="bg-black text-gray-100 p-2">Confirm Checkout</button>
+                                            <button className="text-red-400" onClick={() => setPaymentCurrency(null)}>CANCEL</button>
+                                        </div>
                                     </>
                                 )
                             }
