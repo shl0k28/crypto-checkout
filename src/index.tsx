@@ -1,6 +1,8 @@
 import React from 'react'
 import { render } from 'react-dom'
 import './index.css'
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+
 import { BrowserRouter, Route, Switch} from 'react-router-dom'
 //contexts
 import UserContextProvider from './context/AuthContext'

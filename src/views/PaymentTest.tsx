@@ -19,20 +19,6 @@ const PaymentTest: React.FC = () => {
 	const [web3Instance, setWeb3Instance] = React.useState<Web3 | null>(null)
 	const [contractInstance, setContractInstance] = React.useState<any>()
 
-	/* const providerOptions = {
-		portis: {
-			package: Portis, // required
-			options: {
-			  id: "4795aa60-5914-42f2-bc7d-7dacb6e192cf" // required
-			}
-		}
-	}
-
-	const web3modal = new Web3Modal({
-		providerOptions
-	})
-
-	*/
 	const connectToPortis = async () => {
 		const portis = new Portis('4795aa60-5914-42f2-bc7d-7dacb6e192cf', 'maticMumbai')
 		// @ts-ignore
@@ -61,16 +47,16 @@ const PaymentTest: React.FC = () => {
 
 		const amountInBn = new BN(0.0001)
 
-		// var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
-		// 	from: fromAccount,
-		// 	value: amountInBn
-		// })
-		await web3.eth.sendTransaction({
+		var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
 			from: fromAccount,
-			to: toAccount,
-			chainId: 80001,
 			value: amountInBn
 		})
+		// await web3.eth.sendTransaction({
+		// 	from: fromAccount,
+		// 	to: toAccount,
+		// 	chainId: 80001,
+		// 	value: amountInBn
+		// })
 	}
 
 	return(

@@ -1,10 +1,12 @@
 import React from 'react'
 import { BiBitcoin } from 'react-icons/bi'
 import { SiEthereum } from 'react-icons/si'
+import { GiConfirmed } from 'react-icons/gi'
 import Web3 from 'web3'
 import Portis from '../../assets/portis.png'
 import PortisClass from '@portis/web3'
 import BN from 'bn.js'
+import Loading from '../../views/Loading'
 
 //web3 contract
 import Axion from '../../smart-contract/build/contracts/Axion.json'
@@ -15,6 +17,8 @@ const WalletModal: React.FC = () => {
     const [web3Instance, setWeb3Instance] = React.useState<Web3 | null>(null)
     const [currentAccount, setCurrentAccount] = React.useState<string | null>(null)
     const [transactionStatus, setTransactionStatus] = React.useState<boolean | null>(null)
+    const [loading,setLoading] = React.useState(false)
+    const [transactionHash, setTransactionHash] = React.useState('')
 
     const connectToPortis = async () => {
 		const portis = new PortisClass('4795aa60-5914-42f2-bc7d-7dacb6e192cf', 'maticMumbai')
@@ -38,15 +42,24 @@ const WalletModal: React.FC = () => {
         var fromAccount = accounts[0]
         var toAccount = '0xf69055901752f8f4f7f5bcc33943911e3f347f7d'
         const amountInBn = new BN(0.001)
+        setLoading(true)
         var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
             from: fromAccount,
             value: amountInBn
         })
         console.log('Transaction hash: ', pay.transactionHash)
         if(pay.transactionHash){
-            setTransactionStatus(true)       
+            setTransactionStatus(true)
+            setTransactionHash(pay.transactionHash)
+            setLoading(false)       
         }
     }
+    if(loading === true){ return (
+        <div className="fixed align-middle">
+            <Loading />
+        </div>
+    )}
+    else {
     return(
         <>
             <div className="justify-center items-center flex overflow-x-hidden overflow-y-hidden fixed -inset-10 z-50 outline-none focus:outline-none">
@@ -84,23 +97,42 @@ const WalletModal: React.FC = () => {
                                     {/* <img src={Portis} className="h-24"/> */}
                                 </div>
                                     </>
-                                ) : 
+                                ) :
                                 (
                                     <>
-                                        <div style={{fontFamily:"'Krub', sans-serif"}}>
-                                            <h1 className="text-center text-2xl">Confirm Payment: </h1>
-                                        </div>
-                                        <div style={{fontFamily:"'QuickSand', sans-serif"}}>
-                                            <p>Your total order: $29.99 </p>
-                                        </div>
-                                        <div className="space-x-4">
-                                            <button onClick={() => {
-                                                if(web3Instance){
-                                                    sendEth(web3Instance)
-                                                }
-                                            }} className="bg-black text-gray-100 p-2">Confirm Checkout</button>
-                                            <button className="text-red-400" onClick={() => setPaymentCurrency(null)}>CANCEL</button>
-                                        </div>
+                                    {
+                                        transactionStatus === null ?
+                                        (
+                                            <>
+                                                <div style={{fontFamily:"'Krub', sans-serif"}}>
+                                                    <h1 className="text-center text-2xl">Confirm Payment: </h1>
+                                                </div>
+                                                <div style={{fontFamily:"'QuickSand', sans-serif"}}>
+                                                    <p>Your total order: $29.99 </p>
+                                                </div>
+                                                <div className="space-x-4">
+                                                    <button onClick={() => {
+                                                        if(web3Instance){
+                                                            sendEth(web3Instance)
+                                                        }
+                                                    }} className="bg-black text-gray-100 p-2">Confirm Checkout</button>
+                                                    <button className="text-red-400" onClick={() => setPaymentCurrency(null)}>CANCEL</button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                <div className="flex items-center space-x-4 text-xl justify-center">
+                                                    <GiConfirmed className="text-green-400 text-2xl"/>
+                                                    <p>Transaction Successful</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-center">
+                                                        Transaction Hash : {transactionHash}  
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
                                     </>
                                 )
                             }
@@ -111,6 +143,7 @@ const WalletModal: React.FC = () => {
             </div>
         </>
     )
+    }
 }
 
 export default WalletModal
