@@ -1,4 +1,5 @@
 import React from 'react'
+import { Redirect } from 'react-router'
 import { useAuth } from '../../context/AuthContext'
 
 const LoginForm: React.FC = () => {
@@ -15,6 +16,9 @@ const LoginForm: React.FC = () => {
         if(email && password){
             var res = await loginWithEmail(email, password)
             console.log(res?.user?.uid)
+            if(res){
+                <Redirect to="/dashboard"/>
+            }
         }
     }
 
