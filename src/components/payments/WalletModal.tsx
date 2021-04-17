@@ -39,10 +39,11 @@ const WalletModal: React.FC = () => {
         var toAccount = '0xf69055901752f8f4f7f5bcc33943911e3f347f7d'
         const amountInBn = new BN(0.001)
         var pay = await contract.methods.sendEther(toAccount, amountInBn).send({
-            from: fromAccount
+            from: fromAccount,
+            value: amountInBn
         })
         console.log('Transaction hash: ', pay.transactionHash)
-        if(pay){
+        if(pay.transactionHash){
             setTransactionStatus(true)       
         }
     }
