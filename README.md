@@ -1,8 +1,8 @@
 # Axion - API for easily integrating crpto payments for e-commerce
 
-Find the video here: https://youtu.be/B7OS8VsMfmM
-Find the presentation here: https://drive.google.com/file/d/1K-qTX0sr4ot8VP-_Q59UKH8TXWg5Nil5/view?usp=sharing
-Test the app live: https://axionpay.netlify.app/
+- Find the video here: https://youtu.be/B7OS8VsMfmM
+- Find the presentation here: https://drive.google.com/file/d/1K-qTX0sr4ot8VP-_Q59UKH8TXWg5Nil5/view?usp=sharing
+- Test the app live: https://axionpay.netlify.app/
 
 For now, I've just built a Simple ReactJS Button that integrates the payment with ethereum, done over Matic Testnet.
 
